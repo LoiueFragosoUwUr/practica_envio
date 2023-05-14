@@ -7,6 +7,8 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class FileTransferImpl extends UnicastRemoteObject implements FileTransfer, Serializable{
 
+    final String PATH = "D:\\JavaVSCode\\practica_envio\\";
+
     protected FileTransferImpl() throws RemoteException {
         super();
     }
@@ -15,9 +17,7 @@ public class FileTransferImpl extends UnicastRemoteObject implements FileTransfe
         byte [] buffer = new byte[(int) chunkSize*10+1];
         int offset = 0;
         for(int i = 0; i < 10; i++){
-            String [] fileNameSepareted = fileName.split("[.]");
-            String newFileName = fileNameSepareted[0] + "_" + (i+1) + "."+ fileNameSepareted[1];
-            try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(newFileName))){
+            try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileName))){
                 int bytesRead = 0;
 
                 bytesRead = bis.read(buffer, offset, (int)chunkSize);
@@ -46,9 +46,7 @@ public class FileTransferImpl extends UnicastRemoteObject implements FileTransfe
         int cantidadArchivos = 0;
         boolean completed = false;
         for(int i = 0; i < 10; i++){
-            String [] fileNameSepareted = fileName.split("[.]");
-            String newFileName = fileNameSepareted[0] + "_" + (i+1) + "."+ fileNameSepareted[1];
-            try(FileInputStream fis = new FileInputStream(newFileName)){
+            try(FileInputStream fis = new FileInputStream(fileName)){
                 cantidadArchivos++;
                 fis.close();
             }
@@ -73,13 +71,12 @@ public class FileTransferImpl extends UnicastRemoteObject implements FileTransfe
     @Override
     public boolean transferFile(byte [] data, String fileName, int id, int chunkSize) throws RemoteException {
         System.out.println("Soy el cliente y he recibido el fragmento" + id + " del archivo " + fileName);
-        String [] fileNameSepareted = fileName.split("[.]");
-        String newFileName = fileNameSepareted[0] + "_" + id + "."+ fileNameSepareted[1];
         boolean completed = false;
+        String newFileName = PATH + fileName;
         try(FileOutputStream fos = new FileOutputStream(newFileName, true)){
             fos.write(data);
-            if(verifyFileAndProgress(fileName)){
-                rebuildFile(fileName, chunkSize);
+            if(verifyFileAndProgress(newFileName)){
+                rebuildFile(newFileName, chunkSize);
                 completed = true;
             }
             fos.close();
