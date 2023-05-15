@@ -16,8 +16,10 @@ public class FileTransferImpl extends UnicastRemoteObject implements FileTransfe
     private void rebuildFile(String fileName, float chunkSize) {
         byte[] buffer = new byte[(int) chunkSize * 10 + 1];
         int offset = 0;
-        for (int i = 0; i < 10; i++) {
-            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileName))) {
+        for(int i = 0; i < 10; i++){
+            String [] fileNameSeparated = fileName.split("[0-9][.]");
+            String newFileName = fileNameSeparated[0] + (i+1) + "." + fileNameSeparated[1];
+            try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(newFileName))){
                 int bytesRead = 0;
 
                 bytesRead = bis.read(buffer, offset, (int) chunkSize);
@@ -29,7 +31,7 @@ public class FileTransferImpl extends UnicastRemoteObject implements FileTransfe
             }
         }
 
-        String[] fileNameSepareted = fileName.split("[.]");
+        String [] fileNameSepareted = fileName.split("[0-9][.]");
         String newFileName = fileNameSepareted[0] + "_r." + fileNameSepareted[1];
         try (FileOutputStream fos = new FileOutputStream(newFileName, true)) {
             fos.write(buffer);
@@ -43,8 +45,10 @@ public class FileTransferImpl extends UnicastRemoteObject implements FileTransfe
     private boolean verifyFileAndProgress(String fileName) {
         int cantidadArchivos = 0;
         boolean completed = false;
-        for (int i = 0; i < 10; i++) {
-            try (FileInputStream fis = new FileInputStream(fileName)) {
+        for(int i = 0; i < 10; i++){
+            String [] fileNameSeparated = fileName.split("[0-9][.]");
+            String newFileName = fileNameSeparated[0] + (i+1) + "." + fileNameSeparated[1];
+            try(FileInputStream fis = new FileInputStream(newFileName)){
                 cantidadArchivos++;
                 fis.close();
             } catch (Exception e) {
@@ -54,10 +58,11 @@ public class FileTransferImpl extends UnicastRemoteObject implements FileTransfe
 
         if (cantidadArchivos >= 10) {
             completed = true;
-        } else {
-            float porcentaje = 100 - (cantidadArchivos / 10) * 100;
+        }
+        else{
+            float porcentaje = 1- cantidadArchivos/10;
 
-            System.out.println("Archivo al " + Float.toString(porcentaje) + "%");
+            System.out.println("Archivo al " + porcentaje + "%");
 
         }
 
