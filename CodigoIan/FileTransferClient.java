@@ -22,7 +22,7 @@ public class FileTransferClient {
         // System.out.println("IP " + sHostName);
 
         int index = 1; // my own my mother's Ian's 他の その他の他 ^^
-        String[] clientes = { "26.65.22.16", "26.144.62.14", "26.17.27.132", "localhost", "26.65.22.16" };
+        String[] clientes = { "26.65.22.16", "26.65.22.16", "localhost", "localhost", "26.65.22.16" };
         // String[] clientes = { "26.65.22.16", "localhost", "26.144.62.14",
         // "localhost", "localhost" };
         // Registry registry = LocateRegistry.getRegistry(clientes[], 1099);
